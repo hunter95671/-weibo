@@ -1,10 +1,7 @@
 package com.hunter95.utils;
 
 import com.hunter95.constants.constants;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.NamespaceDescriptor;
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -16,6 +13,8 @@ import java.io.IOException;
  * 3、创建表(三张表)
  * 4、向表插入数据
  * 5、数据删除
+ * 6、数据查询
+ * 7、扫描表(scan)
  */
 public class HBaseUtil {
 
@@ -141,6 +140,65 @@ public class HBaseUtil {
         table.delete(delete);
 
         //4.关闭连接
+        table.close();
+    }
+    //6、获取数据(get)
+    public static void getData(String tableName,String rowKey,String cf,String cn) throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(tableName));
+
+        //2.创建get对象
+        Get get = new Get(Bytes.toBytes(rowKey));
+
+        //2.1指定获取的列族
+        get.addFamily(Bytes.toBytes(cf));
+
+        //2.2指定列族和列
+        get.addColumn(Bytes.toBytes(cf),Bytes.toBytes(cn));
+
+        //2.3设置获取数据的版本数
+        get.setMaxVersions();
+        //3.获取数据
+        Result result = table.get(get);
+
+        //4.解析result并打印
+        for (Cell cell : result.rawCells()) {
+
+            //5.打印数据
+            System.out.println("CF:"+Bytes.toString(CellUtil.cloneFamily(cell))+
+                    "，CN:"+Bytes.toString(CellUtil.cloneQualifier(cell))+
+                    "，value:"+Bytes.toString(CellUtil.cloneValue(cell)));
+        }
+        //6.关闭表连接
+        table.close();
+    }
+    //7、扫描表(scan)
+    public static void scanTable(String tableName) throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(tableName));
+
+        //2.构建scan对象
+        //Scan scan = new Scan(Bytes.toBytes("lisi"),Bytes.toBytes("zhangsan"));
+        Scan scan = new Scan();
+
+        //3.扫描表
+        ResultScanner resultScanner = table.getScanner(scan);
+
+        //4.解析resultScanner
+        for (Result result : resultScanner) {
+            for (Cell cell : result.rawCells()) {
+                //5.解析result并打印数据
+                System.out.println("RK:"+Bytes.toString(CellUtil.cloneRow(cell))+
+                        "，CF:"+Bytes.toString(CellUtil.cloneFamily(cell))+
+                        "，CN:"+Bytes.toString(CellUtil.cloneQualifier(cell))+
+                        "，value:"+Bytes.toString(CellUtil.cloneValue(cell)));
+            }
+        }
+        //关闭表连接
         table.close();
     }
 }
