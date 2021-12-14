@@ -30,8 +30,12 @@ public class TestWeiBo {
     public static void main(String[] args) throws IOException, InterruptedException {
 
         //初始化
-        init();
-        //1001发布微博
+        //init();
+        //HBaseUtil.createTable(constants.USER_TABLE,constants.USER_TABLE_VERSIONS,constants.USER_TABLE_CF);
+        HBaseDao.userRegister("zhangsan","123456");
+        HBaseDao.ifRepeat("lisi");
+
+       /* //1001发布微博
         HBaseDao.publishWeiBo("1001","好耶！");
 
         //1002关注1001和1003
@@ -72,6 +76,6 @@ public class TestWeiBo {
         System.out.println("+++++++++++++++++++++++++++");
 
         //获取1001微博详情
-        HBaseDao.getWeiBo("1001");
+        HBaseDao.getWeiBo("1001");*/
     }
 }

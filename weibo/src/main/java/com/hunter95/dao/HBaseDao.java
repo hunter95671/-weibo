@@ -13,6 +13,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.hunter95.constants.constants.USER_TABLE;
 import static com.hunter95.utils.HBaseUtil.putData;
 
 /**
@@ -23,6 +24,8 @@ import static com.hunter95.utils.HBaseUtil.putData;
  * 5、获取微博用户详情
  * 6、获取用户的初始化页面
  * 7、用户注册
+ * 8、判断用户名是否重复
+ *
  */
 public class HBaseDao {
 
@@ -330,6 +333,37 @@ public class HBaseDao {
     }
     //7、用户注册
     public static void userRegister(String uid,String psw) throws IOException {
-        putData("user",uid,"info","password",psw);
+        putData(USER_TABLE,uid,"info","password",psw);
+    }
+
+    //8、判断用户名是否重复
+    public static boolean ifRepeat(String userName) throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(USER_TABLE));
+
+        //2.构建scan对象
+        //Scan scan = new Scan(Bytes.toBytes("lisi"));
+        Scan scan = new Scan();
+
+        //3.扫描表
+        ResultScanner resultScanner = table.getScanner(scan);
+
+        //4.解析resultScanner
+        for (Result result : resultScanner) {
+            for (Cell cell : result.rawCells()) {
+                //5.解析result并打印数据
+                if(userName.equals(Bytes.toString(CellUtil.cloneRow(cell)))){
+                    table.close();
+                    //System.out.println("false");
+                    return false;
+                }
+            }
+        }
+        //关闭表连接
+        table.close();
+        //System.out.println("true");
+        return true;
     }
 }
