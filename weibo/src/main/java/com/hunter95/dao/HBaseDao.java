@@ -344,7 +344,6 @@ public class HBaseDao {
         Table table = connection.getTable(TableName.valueOf(USER_TABLE));
 
         //2.构建scan对象
-        //Scan scan = new Scan(Bytes.toBytes("lisi"));
         Scan scan = new Scan();
 
         //3.扫描表
