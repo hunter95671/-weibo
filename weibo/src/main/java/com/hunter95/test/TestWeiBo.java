@@ -3,8 +3,16 @@ package com.hunter95.test;
 import com.hunter95.constants.constants;
 import com.hunter95.dao.HBaseDao;
 import com.hunter95.utils.HBaseUtil;
+import org.junit.Test;
 
 import java.io.IOException;
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import static com.hunter95.dao.HBaseDao.filterScan;
+import static com.hunter95.utils.HBaseUtil.scanTable;
 
 public class TestWeiBo {
 
@@ -12,7 +20,7 @@ public class TestWeiBo {
 
         try {
             //创建命名空间
-            HBaseUtil.createNameSpace(constants.NAMESPACE);
+            //HBaseUtil.createNameSpace(constants.NAMESPACE);
             //创建微博内容表
             HBaseUtil.createTable(constants.CONTENT_TABLE,constants.CONTENT_TABLE_VERSIONS,constants.CONTENT_TABLE_CF);
             //创建用户关系表
@@ -32,8 +40,25 @@ public class TestWeiBo {
         //初始化
         //init();
         //HBaseUtil.createTable(constants.USER_TABLE,constants.USER_TABLE_VERSIONS,constants.USER_TABLE_CF);
-        HBaseDao.userRegister("zhangsan","123456");
-        HBaseDao.ifRepeat("lisi");
+        //HBaseDao.userRegister("zhangsan","123456");
+        //HBaseDao.ifRepeat("lisi");
+
+        //1001发布微博
+        HBaseDao.publishWeiBo("zhangsan","一条微博~");
+
+        //scanTable("weibo:content");
+        //scanTable("weibo:user");
+        scanTable("weibo:relation");
+        //scanTable("weibo:inbox");
+
+        //zhangsan关注FDr6gkPfr
+        //HBaseDao.addAttends("zhangsan","FDr6gkPfr");
+        //HBaseDao.addAttends("FDr6gkPfr","zhangsan");
+        //filterScan("FDr6gkPfr","zhangsan");
+
+        //HBaseDao.getInit("FDr6gkPfr");
+
+        //HBaseDao.getWeiBo("zhangsan");
 
        /* //1001发布微博
         HBaseDao.publishWeiBo("1001","好耶！");

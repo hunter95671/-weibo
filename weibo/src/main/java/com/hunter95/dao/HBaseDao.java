@@ -6,13 +6,17 @@ import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.SubstringComparator;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import static com.hunter95.constants.constants.CONTENT_TABLE;
 import static com.hunter95.constants.constants.USER_TABLE;
 import static com.hunter95.utils.HBaseUtil.putData;
 
@@ -25,7 +29,7 @@ import static com.hunter95.utils.HBaseUtil.putData;
  * 6、获取用户的初始化页面
  * 7、用户注册
  * 8、判断用户名是否重复
- *
+ * 9、随机推送
  */
 public class HBaseDao {
 
@@ -37,19 +41,23 @@ public class HBaseDao {
 
         //第一部分：操作微博内容表
         //1.获取微博内容表对象
-        Table contTable = connection.getTable(TableName.valueOf(constants.CONTENT_TABLE));
+        Table contTable = connection.getTable(TableName.valueOf(CONTENT_TABLE));
 
-        //2.获取当前时间戳
-        long ts=System.currentTimeMillis();
+        //2.获取当前时间
+        Long ts = System.currentTimeMillis();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        long date_temp = Long.valueOf(ts);
+        String date_string = sdf.format(new Date(date_temp));
 
         //3.获取rowKey
-        String rowKey=uid+"_"+ts;
+        String rowKey=uid+"_"+date_string;
 
         //4.创建put对象
         Put contPut = new Put(Bytes.toBytes(rowKey));
 
         //5.给put对象赋值
         contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF),Bytes.toBytes("content"),Bytes.toBytes(content));
+        contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF),Bytes.toBytes("time"),Bytes.toBytes(date_string));
 
         //6.执行插入数据操作
         contTable.put(contPut);
@@ -146,7 +154,7 @@ public class HBaseDao {
 
         //第二部分：操作收件箱表
         //1.获取微博内容表对象
-        Table contTable = connection.getTable(TableName.valueOf(constants.CONTENT_TABLE));
+        Table contTable = connection.getTable(TableName.valueOf(CONTENT_TABLE));
 
         //2.创建收件箱表的put对象
         Put inboxPut = new Put(Bytes.toBytes(uid));
@@ -155,7 +163,11 @@ public class HBaseDao {
         for (String attend : attends) {
 
             //4.获取当前被关注者的近期发布的微博(scan)->集合ResultScanner
+            //Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(attend));
+            //Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
             Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
+            scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("content"));
+            //scan.setFilter(filter);
             ResultScanner resultScanner = contTable.getScanner(scan);
 
             //定义一个时间戳
@@ -163,9 +175,11 @@ public class HBaseDao {
             //5.对获取的值进行遍历
             for (Result result : resultScanner) {
 
-                //6.给收件箱表的put对象赋值
-                inboxPut.addColumn(Bytes.toBytes(constants.INBOX_TABLE_CF),Bytes.toBytes(attend),ts++,result.getRow());
-                
+                for (Cell cell : result.rawCells()) {
+                    //6.给收件箱表的put对象赋值
+                    inboxPut.addColumn(Bytes.toBytes(constants.INBOX_TABLE_CF),Bytes.toBytes(attend),ts++,CellUtil.cloneValue(cell));
+
+                }
             }
 
             //7.判断当前put对象是否为空
@@ -266,7 +280,7 @@ public class HBaseDao {
         Table inboxTable = connection.getTable(TableName.valueOf(constants.INBOX_TABLE));
         
         //3.获取微博内容表对象
-        Table contTable = connection.getTable(TableName.valueOf(constants.CONTENT_TABLE));
+        Table contTable = connection.getTable(TableName.valueOf(CONTENT_TABLE));
 
         //4.创建收件箱表get对象，并获取数据(设置最大版本)
         Get inboxGet = new Get(Bytes.toBytes(uid));
@@ -304,7 +318,7 @@ public class HBaseDao {
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
 
         //2.获取微博内容表对象
-        Table table = connection.getTable(TableName.valueOf(constants.CONTENT_TABLE));
+        Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
 
         //3.构建scan对象
         Scan scan = new Scan();
@@ -313,6 +327,9 @@ public class HBaseDao {
         RowFilter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(uid+"_"));
 
         scan.setFilter(rowFilter);
+        //获取内容列
+
+        scan.addColumn(Bytes.toBytes("info"),Bytes.toBytes("content"));
 
         //4.获取数据
         ResultScanner scanner = table.getScanner(scan);
@@ -364,5 +381,65 @@ public class HBaseDao {
         table.close();
         //System.out.println("true");
         return true;
+    }
+    //9、随机推送
+    public static ArrayList<ArrayList<String>> randomPush() throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(USER_TABLE));
+
+        //2.构建scan对象
+        Scan scan = new Scan();
+
+        //3.扫描表
+        ResultScanner resultScanner = table.getScanner(scan);
+
+        ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
+        ArrayList<String> arr = new ArrayList<>();
+        //4.解析resultScanner
+        for (Result result : resultScanner) {
+            for (Cell cell : result.rawCells()) {
+                arr.add(Bytes.toString(CellUtil.cloneRow(cell)));
+                arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
+                //arrayLists.add(arr);
+            }
+        }
+        //关闭表连接
+        table.close();
+        System.out.println(arrayLists);
+        return arrayLists;
+    }
+
+    //10、过滤查询
+    public static void filterScan(String... attend) throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
+
+        //2.构建scan对象
+        for (String s : attend) {
+        Scan scan = new Scan();
+        Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(s));
+        //Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
+        scan.setFilter(filter);
+        //3.扫描表
+        ResultScanner resultScanner = table.getScanner(scan);
+
+        //4.解析resultScanner
+        for (Result result : resultScanner) {
+            for (Cell cell : result.rawCells()) {
+                //5.解析result并打印数据
+                System.out.println("RK："+Bytes.toString(CellUtil.cloneRow(cell))+
+                        "，CF："+Bytes.toString(CellUtil.cloneFamily(cell))+
+                        "，CN："+Bytes.toString(CellUtil.cloneQualifier(cell))+
+                        "，Value："+Bytes.toString(CellUtil.cloneValue(cell)));
+            }
+        }
+        }
+
+        //关闭表连接
+        table.close();
     }
 }
