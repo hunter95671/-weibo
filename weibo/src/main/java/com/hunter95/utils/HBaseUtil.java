@@ -59,17 +59,17 @@ public class HBaseUtil {
     }
 
     //3、创建表
-    public static void createTable(String tableName,int versions,String... cfs) throws IOException {
+    public static void createTable(String tableName, int versions, String... cfs) throws IOException {
 
         //1.判断是否传入了列族信息
-        if (cfs.length<=0){
+        if (cfs.length <= 0) {
             System.out.println("请输入列族信息！");
             return;
         }
 
         //2.判断表是否存在
-        if(isTableExist(tableName)){
-            System.out.println(tableName+"已存在");
+        if (isTableExist(tableName)) {
+            System.out.println(tableName + "已存在");
         }
 
         //3.获取connection对象
@@ -100,8 +100,9 @@ public class HBaseUtil {
         admin.close();
         connection.close();
     }
+
     //4、向表插入数据
-    public static void putData(String tableName,String rowKey,String cf,String cn,String value) throws IOException {
+    public static void putData(String tableName, String rowKey, String cf, String cn, String value) throws IOException {
 
         //1.获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
@@ -111,7 +112,7 @@ public class HBaseUtil {
         Put put = new Put(Bytes.toBytes(rowKey));
 
         //3.给put对象赋值
-        put.addColumn(Bytes.toBytes(cf),Bytes.toBytes(cn),Bytes.toBytes(value));
+        put.addColumn(Bytes.toBytes(cf), Bytes.toBytes(cn), Bytes.toBytes(value));
 
         //4.插入数据
         table.put(put);
@@ -120,8 +121,9 @@ public class HBaseUtil {
         table.close();
 
     }
+
     //5、数据删除
-    public static void deleteData(String tableName,String rowKey,String cf,String cn) throws IOException {
+    public static void deleteData(String tableName, String rowKey, String cf, String cn) throws IOException {
 
         //1.获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
@@ -142,8 +144,9 @@ public class HBaseUtil {
         //4.关闭连接
         table.close();
     }
+
     //6、获取数据(get)
-    public static void getData(String tableName,String rowKey,String cf,String cn) throws IOException {
+    public static void getData(String tableName, String rowKey, String cf, String cn) throws IOException {
 
         //1.获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
@@ -156,7 +159,7 @@ public class HBaseUtil {
         get.addFamily(Bytes.toBytes(cf));
 
         //2.2指定列族和列
-        get.addColumn(Bytes.toBytes(cf),Bytes.toBytes(cn));
+        get.addColumn(Bytes.toBytes(cf), Bytes.toBytes(cn));
 
         //2.3设置获取数据的版本数
         get.setMaxVersions();
@@ -167,13 +170,14 @@ public class HBaseUtil {
         for (Cell cell : result.rawCells()) {
 
             //5.打印数据
-            System.out.println("CF:"+Bytes.toString(CellUtil.cloneFamily(cell))+
-                    "，CN:"+Bytes.toString(CellUtil.cloneQualifier(cell))+
-                    "，value:"+Bytes.toString(CellUtil.cloneValue(cell)));
+            System.out.println("CF:" + Bytes.toString(CellUtil.cloneFamily(cell)) +
+                    "，CN:" + Bytes.toString(CellUtil.cloneQualifier(cell)) +
+                    "，value:" + Bytes.toString(CellUtil.cloneValue(cell)));
         }
         //6.关闭表连接
         table.close();
     }
+
     //7、扫描表(scan)
     public static void scanTable(String tableName) throws IOException {
 
@@ -192,10 +196,10 @@ public class HBaseUtil {
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
                 //5.解析result并打印数据
-                System.out.println("RK:"+Bytes.toString(CellUtil.cloneRow(cell))+
-                        "，CF:"+Bytes.toString(CellUtil.cloneFamily(cell))+
-                        "，CN:"+Bytes.toString(CellUtil.cloneQualifier(cell))+
-                        "，value:"+Bytes.toString(CellUtil.cloneValue(cell)));
+                System.out.println("RK:" + Bytes.toString(CellUtil.cloneRow(cell)) +
+                        "，CF:" + Bytes.toString(CellUtil.cloneFamily(cell)) +
+                        "，CN:" + Bytes.toString(CellUtil.cloneQualifier(cell)) +
+                        "，value:" + Bytes.toString(CellUtil.cloneValue(cell)));
             }
         }
         //关闭表连接

@@ -17,19 +17,19 @@ import static com.hunter95.utils.HBaseUtil.scanTable;
 
 public class TestWeiBo {
 
-    public static void init(){
+    public static void init() {
 
         try {
             //创建命名空间
             //HBaseUtil.createNameSpace(constants.NAMESPACE);
             //创建微博内容表
-            HBaseUtil.createTable(constants.CONTENT_TABLE,constants.CONTENT_TABLE_VERSIONS,constants.CONTENT_TABLE_CF);
+            HBaseUtil.createTable(constants.CONTENT_TABLE, constants.CONTENT_TABLE_VERSIONS, constants.CONTENT_TABLE_CF);
             //创建用户关系表
-            HBaseUtil.createTable(constants.RELATION_TABLE,constants.RELATION_TABLE_VERSIONS,constants.RELATION_TABLE_CF1,constants.RELATION_TABLE_CF2);
+            HBaseUtil.createTable(constants.RELATION_TABLE, constants.RELATION_TABLE_VERSIONS, constants.RELATION_TABLE_CF1, constants.RELATION_TABLE_CF2);
             //创建收件箱表
-            HBaseUtil.createTable(constants.INBOX_TABLE,constants.INBOX_TABLE_VERSIONS,constants.INBOX_TABLE_CF);
+            HBaseUtil.createTable(constants.INBOX_TABLE, constants.INBOX_TABLE_VERSIONS, constants.INBOX_TABLE_CF);
             //创建用户表
-            HBaseUtil.createTable(constants.USER_TABLE,constants.USER_TABLE_VERSIONS,constants.USER_TABLE_CF);
+            HBaseUtil.createTable(constants.USER_TABLE, constants.USER_TABLE_VERSIONS, constants.USER_TABLE_CF);
 
         } catch (IOException e) {
             e.printStackTrace();
