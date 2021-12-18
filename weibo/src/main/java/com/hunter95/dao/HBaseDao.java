@@ -16,8 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.hunter95.constants.constants.CONTENT_TABLE;
-import static com.hunter95.constants.constants.USER_TABLE;
+import static com.hunter95.constants.constants.*;
 import static com.hunter95.utils.HBaseUtil.putData;
 
 /**
@@ -30,6 +29,7 @@ import static com.hunter95.utils.HBaseUtil.putData;
  * 7、用户注册
  * 8、判断用户名是否重复
  * 9、随机推送
+ * 获取用户的关注列表
  */
 public class HBaseDao {
 
@@ -57,14 +57,14 @@ public class HBaseDao {
 
         //5.给put对象赋值
         contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF),Bytes.toBytes("content"),Bytes.toBytes(content));
-        contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF),Bytes.toBytes("time"),Bytes.toBytes(date_string));
+        //contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF),Bytes.toBytes("time"),Bytes.toBytes(date_string));
 
         //6.执行插入数据操作
         contTable.put(contPut);
 
         //第二部分：操作微博收件箱表
         //1.获取关系表对象
-        Table relaTable = connection.getTable(TableName.valueOf(constants.RELATION_TABLE));
+        Table relaTable = connection.getTable(TableName.valueOf(RELATION_TABLE));
 
         //2.获取当前发布微博人的fans列族数据
         Get get = new Get(Bytes.toBytes(uid));
@@ -121,7 +121,7 @@ public class HBaseDao {
 
         //第一部分：操作用户关系表
         //1.获取用户关系表对象
-        Table relaTable = connection.getTable(TableName.valueOf(constants.RELATION_TABLE));
+        Table relaTable = connection.getTable(TableName.valueOf(RELATION_TABLE));
 
         //2.创建一个集合用于存放用户关系表的Put对象
         ArrayList<Put> relaPuts = new ArrayList<>();
@@ -164,7 +164,6 @@ public class HBaseDao {
 
             //4.获取当前被关注者的近期发布的微博(scan)->集合ResultScanner
             //Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(attend));
-            //Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
             Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
             scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("content"));
             //scan.setFilter(filter);
@@ -217,7 +216,7 @@ public class HBaseDao {
         //第一部分：操作用户关系表
 
         //1.获取用户关系表对象
-        Table relaTable = connection.getTable(TableName.valueOf(constants.RELATION_TABLE));
+        Table relaTable = connection.getTable(TableName.valueOf(RELATION_TABLE));
 
         //2.创建一个集合，用于存放用户关系表的delete对象
         ArrayList<Delete> relaDeletes = new ArrayList<>();
@@ -348,6 +347,7 @@ public class HBaseDao {
         table.close();
         connection.close();
     }
+
     //7、用户注册
     public static void userRegister(String uid,String psw) throws IOException {
         putData(USER_TABLE,uid,"info","password",psw);
@@ -382,12 +382,13 @@ public class HBaseDao {
         //System.out.println("true");
         return true;
     }
-    //9、随机推送
-    public static ArrayList<ArrayList<String>> randomPush() throws IOException {
+
+    //9、随机推送(所有用户)
+    public static ArrayList<ArrayList<String>> normalRandomPush() throws IOException {
 
         //1.获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
-        Table table = connection.getTable(TableName.valueOf(USER_TABLE));
+        Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
 
         //2.构建scan对象
         Scan scan = new Scan();
@@ -396,22 +397,71 @@ public class HBaseDao {
         ResultScanner resultScanner = table.getScanner(scan);
 
         ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
-        ArrayList<String> arr = new ArrayList<>();
+
+        int i=0;
         //4.解析resultScanner
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
-                arr.add(Bytes.toString(CellUtil.cloneRow(cell)));
+                i=i+1;
+                ArrayList<String> arr = new ArrayList<>();
+                arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[0]);
+                arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
                 arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
-                //arrayLists.add(arr);
+                arrayLists.add(arr);
+                if (i==3){
+                    table.close();
+                    System.out.println(arrayLists);
+                    //for (ArrayList<String> strings : arrayLists) {
+                    //    System.out.println(strings);
+                    //}
+                    return arrayLists;
+                }
             }
         }
         //关闭表连接
-        table.close();
-        System.out.println(arrayLists);
         return arrayLists;
     }
 
-    //10、过滤查询
+    //9、随机推送(关注用户)
+    public static ArrayList<ArrayList<String>> attendRandomPush() throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
+
+        //2.构建scan对象
+        Scan scan = new Scan();
+
+        //3.扫描表
+        ResultScanner resultScanner = table.getScanner(scan);
+
+        ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
+
+        int i=0;
+        //4.解析resultScanner
+        for (Result result : resultScanner) {
+            for (Cell cell : result.rawCells()) {
+                i=i+1;
+                ArrayList<String> arr = new ArrayList<>();
+                arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[0]);
+                arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
+                arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
+                arrayLists.add(arr);
+                if (i==3){
+                    table.close();
+                    System.out.println(arrayLists);
+                    //for (ArrayList<String> strings : arrayLists) {
+                    //    System.out.println(strings);
+                    //}
+                    return arrayLists;
+                }
+            }
+        }
+        //关闭表连接
+        return arrayLists;
+    }
+
+    //10、RowFilter过滤查询
     public static void filterScan(String... attend) throws IOException {
 
         //1.获取表对象
@@ -441,5 +491,34 @@ public class HBaseDao {
 
         //关闭表连接
         table.close();
+    }
+    //获取用户的关注列表
+    public static ArrayList<String> attendList(String user) throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(RELATION_TABLE));
+
+        //2.构建scan对象
+        Scan scan = new Scan();
+        Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(user));
+        scan.setFilter(filter);
+        scan.addFamily(Bytes.toBytes("attends"));
+
+        //3.扫描表
+        ResultScanner resultScanner = table.getScanner(scan);
+
+        ArrayList<String> arrayLists = new ArrayList<>();
+
+        //4.解析resultScanner
+        for (Result result : resultScanner) {
+            for (Cell cell : result.rawCells()) {
+                arrayLists.add(Bytes.toString(CellUtil.cloneValue(cell)));
+            }
+        }
+        //关闭表连接
+        table.close();
+        //System.out.println(arrayLists);
+        return arrayLists;
     }
 }

@@ -8,10 +8,11 @@ import org.junit.Test;
 import java.io.IOException;
 import java.security.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.hunter95.dao.HBaseDao.filterScan;
+import static com.hunter95.dao.HBaseDao.*;
 import static com.hunter95.utils.HBaseUtil.scanTable;
 
 public class TestWeiBo {
@@ -40,25 +41,51 @@ public class TestWeiBo {
         //初始化
         //init();
         //HBaseUtil.createTable(constants.USER_TABLE,constants.USER_TABLE_VERSIONS,constants.USER_TABLE_CF);
-        //HBaseDao.userRegister("zhangsan","123456");
-        //HBaseDao.ifRepeat("lisi");
 
-        //1001发布微博
-        HBaseDao.publishWeiBo("zhangsan","一条微博~");
-
+        //全表查看
         //scanTable("weibo:content");
         //scanTable("weibo:user");
-        scanTable("weibo:relation");
+        //scanTable("weibo:relation");
         //scanTable("weibo:inbox");
 
+        //用户注册测试
+        //HBaseDao.userRegister("zhangsan","123456");
+
+        //用户名重复测试
+        //HBaseDao.ifRepeat("lisi");
+
+        //发布微博测试
+        //HBaseDao.publishWeiBo("zhangsan","一条微博~");
+
+        //关注用户测试
         //zhangsan关注FDr6gkPfr
         //HBaseDao.addAttends("zhangsan","FDr6gkPfr");
         //HBaseDao.addAttends("FDr6gkPfr","zhangsan");
+
+        //获取用户关注列表测试
+        //ArrayList<String> zhangsanAttendList = attendList("zhangsan");
+        //System.out.println(zhangsanAttendList);
+
+        //过滤查询测试
         //filterScan("FDr6gkPfr","zhangsan");
 
         //HBaseDao.getInit("FDr6gkPfr");
 
         //HBaseDao.getWeiBo("zhangsan");
+
+        /*
+        //随机推送(所有用户)测试
+        ArrayList<ArrayList<String>> arr1 = normalRandomPush();
+        System.out.println(arr1.get(0));
+        System.out.println("用户：");
+        System.out.println(arr1.get(0).get(0));
+        System.out.println("发布日期：");
+        System.out.println(arr1.get(0).get(1));
+        System.out.println("微博内容：");
+        System.out.println(arr1.get(0).get(2));
+        //randomPush();
+        */
+
 
        /* //1001发布微博
         HBaseDao.publishWeiBo("1001","好耶！");
