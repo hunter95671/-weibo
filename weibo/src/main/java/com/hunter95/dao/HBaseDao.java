@@ -34,7 +34,7 @@ import static com.hunter95.utils.HBaseUtil.putData;
 public class HBaseDao {
 
     //1、发布微博
-    public static void publishWeiBo(String uid,String content) throws IOException {
+    public static void publishWeiBo(String uid, String content) throws IOException {
 
         //获取connection对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
@@ -45,18 +45,18 @@ public class HBaseDao {
 
         //2.获取当前时间
         Long ts = System.currentTimeMillis();
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         long date_temp = Long.valueOf(ts);
         String date_string = sdf.format(new Date(date_temp));
 
         //3.获取rowKey
-        String rowKey=uid+"_"+date_string;
+        String rowKey = uid + "_" + date_string;
 
         //4.创建put对象
         Put contPut = new Put(Bytes.toBytes(rowKey));
 
         //5.给put对象赋值
-        contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF),Bytes.toBytes("content"),Bytes.toBytes(content));
+        contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF), Bytes.toBytes("content"), Bytes.toBytes(content));
         //contPut.addColumn(Bytes.toBytes(constants.CONTENT_TABLE_CF),Bytes.toBytes("time"),Bytes.toBytes(date_string));
 
         //6.执行插入数据操作
@@ -81,14 +81,14 @@ public class HBaseDao {
             Put inboxPut = new Put(CellUtil.cloneQualifier(cell));
 
             //6.给微博收件箱表的put对象赋值
-            inboxPut.addColumn(Bytes.toBytes(constants.INBOX_TABLE_CF),Bytes.toBytes(uid),Bytes.toBytes(rowKey));
+            inboxPut.addColumn(Bytes.toBytes(constants.INBOX_TABLE_CF), Bytes.toBytes(uid), Bytes.toBytes(rowKey));
 
             //7.将微博收件箱表的put对象存入集合
             inboxPuts.add(inboxPut);
         }
 
         //8.判断是否有粉丝
-        if(inboxPuts.size()>0){
+        if (inboxPuts.size() > 0) {
 
             //获取收件箱表对象
             Table inboxTable = connection.getTable(TableName.valueOf(constants.INBOX_TABLE));
@@ -108,10 +108,10 @@ public class HBaseDao {
     }
 
     //2、关注用户
-    public static void addAttends(String uid,String... attends) throws IOException {
+    public static void addAttends(String uid, String... attends) throws IOException {
 
         //校验是否添加了待关注的人
-        if(attends.length<=0){
+        if (attends.length <= 0) {
             System.out.println("请选择待关注的人！");
             return;
         }
@@ -133,13 +133,13 @@ public class HBaseDao {
         for (String attend : attends) {
 
             //5.给操作者的put对象赋值
-            uidPut.addColumn(Bytes.toBytes(constants.RELATION_TABLE_CF1),Bytes.toBytes(attend),Bytes.toBytes(attend));
-            
+            uidPut.addColumn(Bytes.toBytes(constants.RELATION_TABLE_CF1), Bytes.toBytes(attend), Bytes.toBytes(attend));
+
             //6.创建被关注者的put对象
             Put attendPut = new Put(Bytes.toBytes(attend));
 
             //7.给被关注者的put对象赋值
-            attendPut.addColumn(Bytes.toBytes(constants.RELATION_TABLE_CF2),Bytes.toBytes(uid),Bytes.toBytes(uid));
+            attendPut.addColumn(Bytes.toBytes(constants.RELATION_TABLE_CF2), Bytes.toBytes(uid), Bytes.toBytes(uid));
 
             //8.将被关注者的put对象放入集合
             relaPuts.add(attendPut);
@@ -176,13 +176,13 @@ public class HBaseDao {
 
                 for (Cell cell : result.rawCells()) {
                     //6.给收件箱表的put对象赋值
-                    inboxPut.addColumn(Bytes.toBytes(constants.INBOX_TABLE_CF),Bytes.toBytes(attend),ts++,CellUtil.cloneValue(cell));
+                    inboxPut.addColumn(Bytes.toBytes(constants.INBOX_TABLE_CF), Bytes.toBytes(attend), ts++, CellUtil.cloneValue(cell));
 
                 }
             }
 
             //7.判断当前put对象是否为空
-            if (inboxPut.isEmpty()){
+            if (inboxPut.isEmpty()) {
 
             }
 
@@ -203,9 +203,9 @@ public class HBaseDao {
     }
 
     //4、取关用户
-    public static void deleteAttends(String uid,String... dels) throws IOException {
+    public static void deleteAttends(String uid, String... dels) throws IOException {
 
-        if (dels.length<=0){
+        if (dels.length <= 0) {
             System.out.println("请添加待取关的用户！");
             return;
         }
@@ -229,13 +229,13 @@ public class HBaseDao {
         for (String del : dels) {
 
             //5.给操作者的delete对象赋值
-            uidDelete.addColumns(Bytes.toBytes(constants.RELATION_TABLE_CF1),Bytes.toBytes(del));
+            uidDelete.addColumns(Bytes.toBytes(constants.RELATION_TABLE_CF1), Bytes.toBytes(del));
 
             //6.创建被取关者的delete对象
             Delete delDelete = new Delete(Bytes.toBytes(del));
 
             //7.给被取关者的delete对象赋值
-            delDelete.addColumns(Bytes.toBytes(constants.RELATION_TABLE_CF2),Bytes.toBytes(uid));
+            delDelete.addColumns(Bytes.toBytes(constants.RELATION_TABLE_CF2), Bytes.toBytes(uid));
 
             //8.将被取关者的delete对象添加至集合
             relaDeletes.add(delDelete);
@@ -257,7 +257,7 @@ public class HBaseDao {
 
         //3.给操作者的delete对象赋值
         for (String del : dels) {
-            inboxDelete.addColumns(Bytes.toBytes(constants.INBOX_TABLE_CF),Bytes.toBytes(del));
+            inboxDelete.addColumns(Bytes.toBytes(constants.INBOX_TABLE_CF), Bytes.toBytes(del));
         }
 
         //4.执行收件箱表删除操作
@@ -277,7 +277,7 @@ public class HBaseDao {
 
         //2.获取收件箱表对象
         Table inboxTable = connection.getTable(TableName.valueOf(constants.INBOX_TABLE));
-        
+
         //3.获取微博内容表对象
         Table contTable = connection.getTable(TableName.valueOf(CONTENT_TABLE));
 
@@ -291,17 +291,17 @@ public class HBaseDao {
 
             //6.构建微博内容表get对象
             Get contGet = new Get(CellUtil.cloneValue(cell));
-            
+
             //7.获取该get对象的数据内容
             Result contResult = contTable.get(contGet);
 
             //8.解析内容并打印
             for (Cell contCell : contResult.rawCells()) {
 
-                System.out.println("RK："+Bytes.toString(CellUtil.cloneRow(cell))+
-                        "，CF："+Bytes.toString(CellUtil.cloneFamily(cell))+
-                        "，CN："+Bytes.toString(CellUtil.cloneQualifier(cell))+
-                        "，Value："+Bytes.toString(CellUtil.cloneValue(cell)));
+                System.out.println("RK：" + Bytes.toString(CellUtil.cloneRow(cell)) +
+                        "，CF：" + Bytes.toString(CellUtil.cloneFamily(cell)) +
+                        "，CN：" + Bytes.toString(CellUtil.cloneQualifier(cell)) +
+                        "，Value：" + Bytes.toString(CellUtil.cloneValue(cell)));
             }
         }
         //关闭资源
@@ -323,12 +323,12 @@ public class HBaseDao {
         Scan scan = new Scan();
 
         //构建过滤器
-        RowFilter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(uid+"_"));
+        RowFilter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(uid + "_"));
 
         scan.setFilter(rowFilter);
         //获取内容列
 
-        scan.addColumn(Bytes.toBytes("info"),Bytes.toBytes("content"));
+        scan.addColumn(Bytes.toBytes("info"), Bytes.toBytes("content"));
 
         //4.获取数据
         ResultScanner scanner = table.getScanner(scan);
@@ -337,10 +337,10 @@ public class HBaseDao {
         for (Result result : scanner) {
 
             for (Cell cell : result.rawCells()) {
-                System.out.println("RK："+Bytes.toString(CellUtil.cloneRow(cell))+
-                        "，CF："+Bytes.toString(CellUtil.cloneFamily(cell))+
-                        "，CN："+Bytes.toString(CellUtil.cloneQualifier(cell))+
-                        "，Value："+Bytes.toString(CellUtil.cloneValue(cell)));
+                System.out.println("RK：" + Bytes.toString(CellUtil.cloneRow(cell)) +
+                        "，CF：" + Bytes.toString(CellUtil.cloneFamily(cell)) +
+                        "，CN：" + Bytes.toString(CellUtil.cloneQualifier(cell)) +
+                        "，Value：" + Bytes.toString(CellUtil.cloneValue(cell)));
             }
         }
         //6.关闭资源
@@ -349,8 +349,8 @@ public class HBaseDao {
     }
 
     //7、用户注册
-    public static void userRegister(String uid,String psw) throws IOException {
-        putData(USER_TABLE,uid,"info","password",psw);
+    public static void userRegister(String uid, String psw) throws IOException {
+        putData(USER_TABLE, uid, "info", "password", psw);
     }
 
     //8、判断用户名是否重复
@@ -370,7 +370,7 @@ public class HBaseDao {
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
                 //5.解析result并打印数据
-                if(userName.equals(Bytes.toString(CellUtil.cloneRow(cell)))){
+                if (userName.equals(Bytes.toString(CellUtil.cloneRow(cell)))) {
                     table.close();
                     //System.out.println("false");
                     return false;
@@ -398,17 +398,17 @@ public class HBaseDao {
 
         ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
 
-        int i=0;
+        int i = 0;
         //4.解析resultScanner
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
-                i=i+1;
+                i = i + 1;
                 ArrayList<String> arr = new ArrayList<>();
                 arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[0]);
                 arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
                 arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
                 arrayLists.add(arr);
-                if (i==3){
+                if (i == 3) {
                     table.close();
                     System.out.println(arrayLists);
                     //for (ArrayList<String> strings : arrayLists) {
@@ -437,17 +437,17 @@ public class HBaseDao {
 
         ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
 
-        int i=0;
+        int i = 0;
         //4.解析resultScanner
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
-                i=i+1;
+                i = i + 1;
                 ArrayList<String> arr = new ArrayList<>();
                 arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[0]);
                 arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
                 arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
                 arrayLists.add(arr);
-                if (i==3){
+                if (i == 3) {
                     table.close();
                     System.out.println(arrayLists);
                     //for (ArrayList<String> strings : arrayLists) {
@@ -470,28 +470,29 @@ public class HBaseDao {
 
         //2.构建scan对象
         for (String s : attend) {
-        Scan scan = new Scan();
-        Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(s));
-        //Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
-        scan.setFilter(filter);
-        //3.扫描表
-        ResultScanner resultScanner = table.getScanner(scan);
+            Scan scan = new Scan();
+            Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(s));
+            //Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
+            scan.setFilter(filter);
+            //3.扫描表
+            ResultScanner resultScanner = table.getScanner(scan);
 
-        //4.解析resultScanner
-        for (Result result : resultScanner) {
-            for (Cell cell : result.rawCells()) {
-                //5.解析result并打印数据
-                System.out.println("RK："+Bytes.toString(CellUtil.cloneRow(cell))+
-                        "，CF："+Bytes.toString(CellUtil.cloneFamily(cell))+
-                        "，CN："+Bytes.toString(CellUtil.cloneQualifier(cell))+
-                        "，Value："+Bytes.toString(CellUtil.cloneValue(cell)));
+            //4.解析resultScanner
+            for (Result result : resultScanner) {
+                for (Cell cell : result.rawCells()) {
+                    //5.解析result并打印数据
+                    System.out.println("RK：" + Bytes.toString(CellUtil.cloneRow(cell)) +
+                            "，CF：" + Bytes.toString(CellUtil.cloneFamily(cell)) +
+                            "，CN：" + Bytes.toString(CellUtil.cloneQualifier(cell)) +
+                            "，Value：" + Bytes.toString(CellUtil.cloneValue(cell)));
+                }
             }
-        }
         }
 
         //关闭表连接
         table.close();
     }
+
     //获取用户的关注列表
     public static ArrayList<String> attendList(String user) throws IOException {
 
@@ -501,7 +502,7 @@ public class HBaseDao {
 
         //2.构建scan对象
         Scan scan = new Scan();
-        Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator(user));
+        Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(user));
         scan.setFilter(filter);
         scan.addFamily(Bytes.toBytes("attends"));
 
