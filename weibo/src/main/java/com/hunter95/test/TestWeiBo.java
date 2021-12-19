@@ -27,8 +27,6 @@ public class TestWeiBo {
             HBaseUtil.createTable(constants.CONTENT_TABLE, constants.CONTENT_TABLE_VERSIONS, constants.CONTENT_TABLE_CF);
             //创建用户关系表
             HBaseUtil.createTable(constants.RELATION_TABLE, constants.RELATION_TABLE_VERSIONS, constants.RELATION_TABLE_CF1, constants.RELATION_TABLE_CF2);
-            //创建收件箱表
-            HBaseUtil.createTable(constants.INBOX_TABLE, constants.INBOX_TABLE_VERSIONS, constants.INBOX_TABLE_CF);
             //创建用户表
             HBaseUtil.createTable(constants.USER_TABLE, constants.USER_TABLE_VERSIONS, constants.USER_TABLE_CF);
 
@@ -47,10 +45,12 @@ public class TestWeiBo {
         //scanTable("weibo:content");
         //scanTable("weibo:user");
         //scanTable("weibo:relation");
-        //scanTable("weibo:inbox");
 
         //用户注册测试
         //HBaseDao.userRegister("zhangsan","123456");
+
+        //判断密码是否正确测试
+        //pswIfRight("zhangsan","123456");
 
         //用户名重复测试
         //HBaseDao.ifRepeat("lisi");
@@ -58,13 +58,19 @@ public class TestWeiBo {
         //发布微博测试
         //HBaseDao.publishWeiBo("zhangsan","一条微博~");
 
+        //删除微博测试
+        //deleteWeiBo("zhangsan_2021-12-19 11:06");
+
+        //ArrayList<ArrayList<String>> zhangsan = getWeiBo("zhangsan");
+        //System.out.println(zhangsan);
+
         //关注用户测试
         //zhangsan关注FDr6gkPfr,FAvM1fL1I
         //HBaseDao.addAttends("zhangsan","FDr6gkPfr");
         //HBaseDao.addAttends("zhangsan","FAvM1fL1I");
 
         //获取用户关注列表测试
-        ArrayList<String> zhangsanAttendList = attendList("zhangsan");
+        //ArrayList<String> zhangsanAttendList = attendList("zhangsan");
         //System.out.println(zhangsanAttendList);
 
         //过滤查询测试
@@ -73,6 +79,10 @@ public class TestWeiBo {
         //HBaseDao.getInit("FDr6gkPfr");
 
         //HBaseDao.getWeiBo("zhangsan");
+
+        //获取某人微博
+        //ArrayList<ArrayList<String>> L5wHU1jIe = getWeiBo("L5wHU1jIe");
+        //System.out.println(L5wHU1jIe);
 
         /*
         //随机推送(所有用户)测试
@@ -87,26 +97,16 @@ public class TestWeiBo {
         //randomPush();
         */
 
-        //ArrayList<ArrayList<String>> lists = attendRandomPush(attendList("zhangsan"));
-        //System.out.println(lists.get(0).get(1));
-
-       /* Random random = new Random ();
-        boolean[]  bool = new boolean[14];
-        int randInt = 0;
-        for(int j = 0; j < 9 ; j++) {
-            do {
-                randInt = random.nextInt(14);
-            } while (bool[randInt] = true);
-        }
-        */
-
         //随机数组生成
+
+        /*
+        ArrayList<ArrayList<String>> lists = attendRandomPush(attendList("zhangsan"));
+
         ArrayList<Integer> numList = new ArrayList<>();
         Random random = new Random ();
-        int k=10;
         int i=0;
-        while (i<k) {
-            int randInt = random.nextInt(88);
+        while (i<lists.size()) {
+            int randInt = random.nextInt(lists.size());
             if (numList.contains(randInt)){
             }else {
                 i+=1;
@@ -116,47 +116,17 @@ public class TestWeiBo {
 
         System.out.println(numList);
 
-       /* //1001发布微博
-        HBaseDao.publishWeiBo("1001","好耶！");
+        for (Integer integer : numList) {
+            System.out.println(lists.get(integer).get(0));
+        }
+*/
+        //未关注者推送
+        //ArrayList<ArrayList<String>> zhangsan = notAttendRandomPush(attendList("zhangsan"));
+        //System.out.println(zhangsan);
 
-        //1002关注1001和1003
-        HBaseDao.addAttends("1002","1001","1003");
+        //关注者推送
+        //ArrayList<ArrayList<String>> zhangsan = attendRandomPush(attendList("zhangsan"));
+        //System.out.println(zhangsan);
 
-        //获取1002初始化页面
-        HBaseDao.getInit("1002");
-
-        System.out.println("+++++++++++++++++++++++++++");
-
-        //1003发布三条微博，同时1001发布两条微博
-        HBaseDao.publishWeiBo("1003","ok！");
-        Thread.sleep(10);
-        HBaseDao.publishWeiBo("1003","hi！");
-        Thread.sleep(10);
-        HBaseDao.publishWeiBo("1003","hello！");
-        Thread.sleep(10);
-        HBaseDao.publishWeiBo("1001","好的！");
-        Thread.sleep(10);
-        HBaseDao.publishWeiBo("1001","好呀！");
-
-        //获取1002初始化页面
-        HBaseDao.getInit("1002");
-        System.out.println("+++++++++++++++++++++++++++");
-
-        //1002取关1003
-        HBaseDao.deleteAttends("1002","1003");
-
-        //获取1002初始化页面
-        HBaseDao.getInit("1002");
-        System.out.println("+++++++++++++++++++++++++++");
-
-        //1002再次关注1003
-        HBaseDao.addAttends("1002","1003");
-
-        //获取1002初始化页面
-        HBaseDao.getInit("1002");
-        System.out.println("+++++++++++++++++++++++++++");
-
-        //获取1001微博详情
-        HBaseDao.getWeiBo("1001");*/
     }
 }

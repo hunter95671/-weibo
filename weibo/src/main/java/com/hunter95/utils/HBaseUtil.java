@@ -3,9 +3,16 @@ package com.hunter95.utils;
 import com.hunter95.constants.constants;
 import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.RowFilter;
+import org.apache.hadoop.hbase.filter.SubstringComparator;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static com.hunter95.constants.constants.CONTENT_TABLE;
 
 /**
  * 1、创建命名空间
@@ -15,6 +22,7 @@ import java.io.IOException;
  * 5、数据删除
  * 6、数据查询
  * 7、扫描表(scan)
+ * 8、RowFilter过滤查询
  */
 public class HBaseUtil {
 
@@ -123,7 +131,7 @@ public class HBaseUtil {
     }
 
     //5、数据删除
-    public static void deleteData(String tableName, String rowKey, String cf, String cn) throws IOException {
+    public static void deleteData(String tableName, String rowKey) throws IOException {
 
         //1.获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
@@ -192,6 +200,8 @@ public class HBaseUtil {
         //3.扫描表
         ResultScanner resultScanner = table.getScanner(scan);
 
+
+
         //4.解析resultScanner
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
@@ -202,6 +212,38 @@ public class HBaseUtil {
                         "，value:" + Bytes.toString(CellUtil.cloneValue(cell)));
             }
         }
+        //关闭表连接
+        table.close();
+    }
+
+    //8、RowFilter过滤查询
+    public static void filterScan(ArrayList<String> attend) throws IOException {
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
+
+        //2.构建scan对象
+        for (String s : attend) {
+            Scan scan = new Scan();
+            Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(s));
+            //Scan scan = new Scan(Bytes.toBytes(attend + "_"), Bytes.toBytes(attend + "|"));
+            scan.setFilter(filter);
+            //3.扫描表
+            ResultScanner resultScanner = table.getScanner(scan);
+
+            //4.解析resultScanner
+            for (Result result : resultScanner) {
+                for (Cell cell : result.rawCells()) {
+                    //5.解析result并打印数据
+                    System.out.println("RK：" + Bytes.toString(CellUtil.cloneRow(cell)) +
+                            "，CF：" + Bytes.toString(CellUtil.cloneFamily(cell)) +
+                            "，CN：" + Bytes.toString(CellUtil.cloneQualifier(cell)) +
+                            "，Value：" + Bytes.toString(CellUtil.cloneValue(cell)));
+                }
+            }
+        }
+
         //关闭表连接
         table.close();
     }

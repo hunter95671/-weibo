@@ -35,9 +35,4 @@ public class constants {
     public static final String RELATION_TABLE_CF2="fans";
     public static final int RELATION_TABLE_VERSIONS=1;
 
-    //收件箱表
-    public static final String INBOX_TABLE="weibo:inbox";
-    public static final String INBOX_TABLE_CF="info";
-    public static final int INBOX_TABLE_VERSIONS=2;
-
 }
