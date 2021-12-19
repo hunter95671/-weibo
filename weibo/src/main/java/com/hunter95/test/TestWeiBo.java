@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 import static com.hunter95.dao.HBaseDao.*;
 import static com.hunter95.utils.HBaseUtil.scanTable;
@@ -58,12 +59,12 @@ public class TestWeiBo {
         //HBaseDao.publishWeiBo("zhangsan","一条微博~");
 
         //关注用户测试
-        //zhangsan关注FDr6gkPfr
+        //zhangsan关注FDr6gkPfr,FAvM1fL1I
         //HBaseDao.addAttends("zhangsan","FDr6gkPfr");
-        //HBaseDao.addAttends("FDr6gkPfr","zhangsan");
+        //HBaseDao.addAttends("zhangsan","FAvM1fL1I");
 
         //获取用户关注列表测试
-        //ArrayList<String> zhangsanAttendList = attendList("zhangsan");
+        ArrayList<String> zhangsanAttendList = attendList("zhangsan");
         //System.out.println(zhangsanAttendList);
 
         //过滤查询测试
@@ -86,6 +87,34 @@ public class TestWeiBo {
         //randomPush();
         */
 
+        //ArrayList<ArrayList<String>> lists = attendRandomPush(attendList("zhangsan"));
+        //System.out.println(lists.get(0).get(1));
+
+       /* Random random = new Random ();
+        boolean[]  bool = new boolean[14];
+        int randInt = 0;
+        for(int j = 0; j < 9 ; j++) {
+            do {
+                randInt = random.nextInt(14);
+            } while (bool[randInt] = true);
+        }
+        */
+
+        //随机数组生成
+        ArrayList<Integer> numList = new ArrayList<>();
+        Random random = new Random ();
+        int k=10;
+        int i=0;
+        while (i<k) {
+            int randInt = random.nextInt(88);
+            if (numList.contains(randInt)){
+            }else {
+                i+=1;
+                numList.add(randInt);
+            }
+        }
+
+        System.out.println(numList);
 
        /* //1001发布微博
         HBaseDao.publishWeiBo("1001","好耶！");

@@ -28,7 +28,8 @@ import static com.hunter95.utils.HBaseUtil.putData;
  * 6、获取用户的初始化页面
  * 7、用户注册
  * 8、判断用户名是否重复
- * 9、随机推送
+ * 9、随机推送(所有用户)
+ * 9、随机推送(关注用户)
  * 获取用户的关注列表
  */
 public class HBaseDao {
@@ -423,46 +424,45 @@ public class HBaseDao {
     }
 
     //9、随机推送(关注用户)
-    public static ArrayList<ArrayList<String>> attendRandomPush() throws IOException {
+    public static ArrayList<ArrayList<String>> attendRandomPush(ArrayList<String> attend) throws IOException {
 
-        //1.获取表对象
+        //获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
         Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
 
-        //2.构建scan对象
-        Scan scan = new Scan();
-
-        //3.扫描表
-        ResultScanner resultScanner = table.getScanner(scan);
-
         ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
 
-        int i = 0;
-        //4.解析resultScanner
-        for (Result result : resultScanner) {
-            for (Cell cell : result.rawCells()) {
-                i = i + 1;
-                ArrayList<String> arr = new ArrayList<>();
-                arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[0]);
-                arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
-                arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
-                arrayLists.add(arr);
-                if (i == 3) {
-                    table.close();
-                    System.out.println(arrayLists);
-                    //for (ArrayList<String> strings : arrayLists) {
-                    //    System.out.println(strings);
-                    //}
-                    return arrayLists;
+        //循环遍历关注的用户
+        for (String s : attend) {
+
+            Scan scan = new Scan();
+            Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(s));
+            scan.setFilter(filter);
+
+            ResultScanner resultScanner = table.getScanner(scan);
+
+            //解析resultScanner
+            for (Result result : resultScanner) {
+               // int i = 0;
+                for (Cell cell : result.rawCells()) {
+                    //i = i + 1;
+                    ArrayList<String> arr = new ArrayList<>();
+                    arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[0]);
+                    arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
+                    arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
+                    arrayLists.add(arr);
+                    }
                 }
-            }
         }
-        //关闭表连接
+        for (ArrayList<String> strings : arrayLists) {
+            System.out.println(strings);
+        }
+        table.close();
         return arrayLists;
     }
 
     //10、RowFilter过滤查询
-    public static void filterScan(String... attend) throws IOException {
+    public static void filterScan(ArrayList<String> attend) throws IOException {
 
         //1.获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
