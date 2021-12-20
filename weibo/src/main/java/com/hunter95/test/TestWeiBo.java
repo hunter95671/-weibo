@@ -53,7 +53,7 @@ public class TestWeiBo {
         //pswIfRight("zhangsan","123456");
 
         //用户名重复测试
-        //HBaseDao.ifRepeat("lisi");
+        //HBaseDao.ifRepeat("zhangsan");
 
         //发布微博测试
         //HBaseDao.publishWeiBo("zhangsan","一条微博~");
@@ -70,8 +70,14 @@ public class TestWeiBo {
         //HBaseDao.addAttends("zhangsan","FAvM1fL1I");
 
         //获取用户关注列表测试
-        //ArrayList<String> zhangsanAttendList = attendList("zhangsan");
+        //ArrayList<String> zhangsanAttendList = attendList("index");
         //System.out.println(zhangsanAttendList);
+
+        ArrayList<ArrayList<String>> index = notAttendRandomPush(attendList("index"));
+        System.out.println(index);
+
+        //取关测试
+        //deleteAttends("zhangsan","FDr6gkPfr");
 
         //过滤查询测试
         //filterScan("FDr6gkPfr","zhangsan");
@@ -81,7 +87,7 @@ public class TestWeiBo {
         //HBaseDao.getWeiBo("zhangsan");
 
         //获取某人微博
-        //ArrayList<ArrayList<String>> L5wHU1jIe = getWeiBo("L5wHU1jIe");
+        //ArrayList<ArrayList<String>> L5wHU1jIe = getWeiBo("FAvM1fL1I");
         //System.out.println(L5wHU1jIe);
 
         /*
@@ -120,13 +126,27 @@ public class TestWeiBo {
             System.out.println(lists.get(integer).get(0));
         }
 */
-        //未关注者推送
-        //ArrayList<ArrayList<String>> zhangsan = notAttendRandomPush(attendList("zhangsan"));
+        /*//未关注者推送
+        ArrayList<ArrayList<String>> zhangsan = notAttendRandomPush(attendList("zhangsan"));
+        String[] weiboCon = null;
+        weiboCon = new String[zhangsan.size()];
+        for (int i = 0; i < zhangsan.size(); i++) {
+            weiboCon[i] =zhangsan.get(i).get(1);
+        }
+        for (String s : weiboCon) {
+            System.out.println(s);
+        }*/
         //System.out.println(zhangsan);
 
         //关注者推送
         //ArrayList<ArrayList<String>> zhangsan = attendRandomPush(attendList("zhangsan"));
         //System.out.println(zhangsan);
+
+        //获得当前用户发布微博数目测试
+        //System.out.println(userWeiBoNum("L5wHU1jIe"));
+
+        //获得当前用户关注用户数目测试
+        //System.out.println(userAttendNum("zhangsan"));
 
     }
 }

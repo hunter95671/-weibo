@@ -1,4 +1,4 @@
-package WeiBoGUI;
+package com.hunter95.WeiBoGUI;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
@@ -7,6 +7,10 @@ import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import static com.hunter95.dao.HBaseDao.ifRepeat;
+import static com.hunter95.dao.HBaseDao.userRegister;
 
 public class RegisterFrame extends JFrame {
 
@@ -96,40 +100,46 @@ public class RegisterFrame extends JFrame {
                     );
                 }
                 //判断用户名是否存在
-                else if (userText.getText().equals("123")) {
-                    JOptionPane.showMessageDialog(
-                            container,
-                            "用户名已存在！",
-                            "消息标题",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }else if(password.length() < 6 || password.length() > 16){
-                    JOptionPane.showMessageDialog(
-                            container,
-                            "密码长度不符合要求！",
-                            "消息标题",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }
-                else if (!password.equals(rePassword)) {
-                    JOptionPane.showMessageDialog(
-                            container,
-                            "两次输入密码不一致！",
-                            "消息标题",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                } else {
-                    JOptionPane.showMessageDialog(
-                            //注册成功后将用户信息写入数据库
-                            container,
-                            "注册成功",
-                            "消息标题",
-                            JOptionPane.INFORMATION_MESSAGE
+                else {
+                    try {
+                        if (!ifRepeat(userText.getText())) {
+                            JOptionPane.showMessageDialog(
+                                    container,
+                                    "用户名已存在！",
+                                    "消息标题",
+                                    JOptionPane.WARNING_MESSAGE
+                            );
+                        }else if(password.length() < 6 || password.length() > 16){
+                            JOptionPane.showMessageDialog(
+                                    container,
+                                    "密码长度不符合要求！",
+                                    "消息标题",
+                                    JOptionPane.WARNING_MESSAGE
+                            );
+                        }
+                        else if (!password.equals(rePassword)) {
+                            JOptionPane.showMessageDialog(
+                                    container,
+                                    "两次输入密码不一致！",
+                                    "消息标题",
+                                    JOptionPane.WARNING_MESSAGE
+                            );
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    //注册成功后将用户信息写入数据库
+                                    container,
+                                    "注册成功",
+                                    "消息标题",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            userRegister(userText.getText(),password);
+                            new LoginFrame();
+                            dispose();
 
-                    );
-                    new LoginFrame();
-                    dispose();
-
+                        }
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
                 }
             }
         });

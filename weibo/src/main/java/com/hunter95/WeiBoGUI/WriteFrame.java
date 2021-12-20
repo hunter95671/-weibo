@@ -1,4 +1,4 @@
-package WeiBoGUI;
+package com.hunter95.WeiBoGUI;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
@@ -7,6 +7,9 @@ import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import static com.hunter95.dao.HBaseDao.publishWeiBo;
 
 public class WriteFrame extends JFrame {
 
@@ -47,14 +50,24 @@ public class WriteFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(
-                        //注册成功后将用户信息写入数据库
+                        //写微博成功后将信息写入数据库
                         container,
                         "发布成功！",
                         "提示信息",
                         JOptionPane.INFORMATION_MESSAGE
                 );
 
-                new UserFrame(true);
+                try {
+                    publishWeiBo(LoginFrame.userName,textArea.getText());
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+
+                try {
+                    new UserFrame(true);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 dispose();
             }
         });

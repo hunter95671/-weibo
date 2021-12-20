@@ -1,4 +1,4 @@
-package WeiBoGUI;
+package com.hunter95.WeiBoGUI;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
@@ -7,10 +7,13 @@ import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import static com.hunter95.dao.HBaseDao.pswIfRight;
 
 public class LoginFrame extends JFrame {
     //用户名
-    public static String userName = "index";
+    public static String userName = "";
 
     public LoginFrame() {
         //登录界面
@@ -19,8 +22,10 @@ public class LoginFrame extends JFrame {
         container.setLayout(null);
 
         //上部分面板
-        JLabel upLabel = new JLabel();
+        ImageIcon backPicture = new ImageIcon("src/main/QQ截图20211220103816.png");
+        JLabel upLabel = new JLabel(backPicture);
         upLabel.setBounds(0,0,600,200);
+        upLabel.setBackground(new Color(0,0,0));
 
         //下部分面板
         JLabel downLabel = new JLabel();
@@ -86,24 +91,30 @@ public class LoginFrame extends JFrame {
                             "消息标题",
                             JOptionPane.WARNING_MESSAGE
                     );
-                }else if(password.equals(userText.getText())){
-                    userName = userText.getText();
-                    JOptionPane.showMessageDialog(
-                            container,
-                            "登录成功",
-                            "消息标题",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                    new HomepageFrame();
-                    dispose();
                 }else {
-                    JOptionPane.showMessageDialog(
-                            container,
-                            "用户名或密码错误！",
-                            "消息标题",
-                            JOptionPane.WARNING_MESSAGE
-                    );
+                    try {
+                        if(pswIfRight(userText.getText(),password)){
+                            userName = userText.getText();
+                            JOptionPane.showMessageDialog(
+                                    container,
+                                    "登录成功",
+                                    "消息标题",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            new HomepageFrame();
+                            dispose();
+                        }else {
+                            JOptionPane.showMessageDialog(
+                                    container,
+                                    "用户名或密码错误！",
+                                    "消息标题",
+                                    JOptionPane.WARNING_MESSAGE
+                            );
 
+                        }
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
                 }
             }
         });
@@ -135,6 +146,7 @@ public class LoginFrame extends JFrame {
 
         //界面参数
         setBounds(500,150,600,540);
+        setBackground(Color.black);
         setVisible(true);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

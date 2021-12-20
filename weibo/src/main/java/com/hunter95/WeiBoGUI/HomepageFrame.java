@@ -1,172 +1,144 @@
-package WeiBoGUI;
+package com.hunter95.WeiBoGUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static com.hunter95.dao.HBaseDao.attendList;
+import static com.hunter95.dao.HBaseDao.notAttendRandomPush;
 
 public class HomepageFrame extends JFrame {
     public Container container = this.getContentPane();
 
-    private JScrollPane jScrollPane = null;
-    private JPanel fatherPanel = null;
-    private JPanel[] jPanels = null;
+    private JScrollPane jScrollPane ;
+    private JPanel fatherPanel ;
+    private JPanel[] jPanels = null ;
 
     private int weiboNum = 0;
-    private String[] weibo = null;
-    private String[] weiboTime = null;
-    private String[] weiBoName = null;
+    private String[] weibo={""};
+    private String[] weiboTime={""} ;
+    private String[] weiBoName={""} ;
 
 
-
-    private int getWeiboNum(){
-        //获得当前用户发布微博数目
-        if (weiboNum == 0)
-        {
+    private int getWeiboNum() {
+        //获得随机推送发布微博数目
+        if (weiboNum == 0) {
             weiboNum = 10;
         }
         return weiboNum;
     }
 
 
-    private String[] getWeibo(){
-        //获得当前用户发布微博内容
-        if (weibo == null)
-        {
+    private String[] getWeibo() throws IOException {
+        //获得随机微博内容
             weibo = new String[getWeiboNum()];
-            String[] hereWeiBo = {"<html>#AMX玻尿酸酸奶嘭弹上市# 靠近点～看我发现了什么——@安慕希 AMX「肌肤关系」玻尿酸酸奶！0蔗糖酸奶基底，搭配真实石榴樱桃果味酱，添加食品级玻尿酸。快来get我的同款酸奶吧?? Dear-迪丽热巴的微博视频 ?",
-                    "<html>工作中追求一丝不苟，生活中追求一尘不染。莱克天狼星三合一全屋吸尘/洗地机，定点喷洗，洗过即干。给家带来从里到外的干净。和@LEXY莱克 一起，让世界更干净。#迪丽热巴代言莱克清洁电器# LEXY莱克的微博视频 ?",
-                    "<html>剧美生活，无限热爱！跟我一起关注#电视剧大赏##年度好剧推荐#活动，为你推荐我的年度好剧《长歌行》和《你是我的荣耀》，感谢大家对李长歌和乔晶晶的喜爱！ ?[组图共2张]?原图?",
-                    "<html>#电视剧烈火如歌# 破亿啦！下周烧饼铺就要开张啦，都来吃烧饼哟，买一...送...么么哒 ?原图?",
-                    "<html>立冬和初雪一起来了?? 绿洲 ?[组图共4张]?原图?",
-                    "<html>#路易200#旅行，是空间与时间的转换，世界各地的文化更为@路易威登 提供了无尽艺术灵感。点击视频，与我共启旅程。 Dear-迪丽热巴的微博视频 ?",
-                    "Godly",
-                    "Joe",
-                    "Ernest",
-                    "Frank"};
-            if (weibo.length >= 0) System.arraycopy(hereWeiBo, 0, weibo, 0, weibo.length);
+            ArrayList<ArrayList<String>> arrayList = notAttendRandomPush(attendList(LoginFrame.userName));
+            for (int i = 0; i < getWeiboNum(); i++) {
+                weibo[i] = arrayList.get(i).get(2);
+
         }
         return weibo;
     }
 
-
-    private String[] getWeiboTime(){
+    private String[] getWeiboTime() throws IOException {
         //获得当前用户发布微博时间
-        if (weiboTime == null)
-        {
+
             weiboTime = new String[getWeiboNum()];
-            String[] hereTime = {"2021/12/11 11:00",
-                    "2021/12/8 10:05" ,
-                    "2021/12/3 12:00" ,
-                    "2021/11/26 16:24" ,
-                    "2021/11/18 14:38" ,
-                    "2021/11/16 19:24" ,
-                    "2021/11/16 14:01" ,
-                    "2021/11/13 10:26" ,
-                    "2021/11/10 13:26" ,
-                    "2021/11/7 10:12"};
-            System.arraycopy(hereTime, 0, weiboTime, 0, weibo.length);
-        }
+            ArrayList<ArrayList<String>> arrayList = notAttendRandomPush(attendList(LoginFrame.userName));
+            for (int i = 0; i < getWeiboNum(); i++) {
+                weiboTime[i] = arrayList.get(i).get(1);
+            }
+
         return weiboTime;
     }
 
 
-    private String[] getWeiBoName(){
+    private String[] getWeiBoName() throws IOException {
         //获得当前用户关注用户的发布过微博的用户名
-        if (weiBoName == null)
-        {
+
             weiBoName = new String[getWeiboNum()];
-            String[] hereTime = {"Roswell", "Quincy", "Quincy","Godly",
-                    "Joe",
-                    "Ernest",
-                    "Frank",
-                    "Joe",
-                    "Ernest",
-                    "Frank"};
-            System.arraycopy(hereTime, 0, weiBoName, 0, weiBoName.length);
+            ArrayList<ArrayList<String>> arrayList = notAttendRandomPush(attendList(LoginFrame.userName));
+            for (int i = 0; i < getWeiboNum(); i++) {
+                weiBoName[i] = arrayList.get(i).get(0);
+
         }
+
         return weiBoName;
     }
 
 
+    private JScrollPane getJScrollPane() throws IOException {
 
-    private JScrollPane getJScrollPane()
-
-    {
-        if (jScrollPane == null)
-
-        {
             jScrollPane = new JScrollPane();
+            jScrollPane.setBounds(40, 80, 520, 400);
+            jScrollPane.setViewportView(getFatherPanel(getJPanels()));
 
-                jScrollPane.setBounds(40,80,520,400);
-                jScrollPane.setViewportView(getFatherPanel(getJPanels()));
 
 
-        }
 
         return jScrollPane;
 
     }
 
 
+    private JPanel[] getJPanels() throws IOException {
 
-    private JPanel[] getJPanels()
 
-    {
-
-        if (jPanels == null) {
             jPanels = new JPanel[getWeiboNum()];
             for (int i = 0; i < getWeiboNum(); i++) {
                 jPanels[i] = new JPanel();
                 jPanels[i].setLayout(null);
-                jPanels[i].setBounds(0,0,520,200);
+                jPanels[i].setBounds(0, 0, 520, 200);
 
                 JButton button = new JButton(getWeiBoName()[i]);
-                button.setBounds(0,0,100,20);
+                button.setBounds(0, 0, 150, 20);
                 int finalI = i;
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        new OtherFrame(getWeiBoName()[finalI]);
+                        try {
+                            new OtherFrame(getWeiBoName()[finalI]);
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
                         dispose();
                     }
                 });
                 JLabel weiboLabel = new JLabel(getWeibo()[i]);
-                weiboLabel.setBounds(0,30,500,100);
+                weiboLabel.setBounds(0, 30, 500, 100);
                 JLabel timeLabel = new JLabel(getWeiboTime()[i]);
-                timeLabel.setBounds(0,150,200,20);
+                timeLabel.setBounds(0, 150, 200, 20);
 
                 jPanels[i].add(button);
                 jPanels[i].add(weiboLabel);
                 jPanels[i].add(timeLabel);
 
 
-
-
             }
 
-        }
+
 
         return jPanels;
 
     }
 
 
-    private JPanel getFatherPanel(JPanel[] weibo){
+    private JPanel getFatherPanel(JPanel[] weibo) {
 
-        if (fatherPanel == null)
-        {
+
             fatherPanel = new JPanel();
-            fatherPanel.setLayout(new GridLayout(weibo.length,1));
+            fatherPanel.setLayout(new GridLayout(weibo.length, 1));
 
-            for (int i = 0; i < weibo.length; i++)
-            {
+            for (int i = 0; i < weibo.length; i++) {
 
                 fatherPanel.add(weibo[i]);
 
-            }
 
-                fatherPanel.setPreferredSize(new Dimension(520,200 * weibo.length));
+
+            fatherPanel.setPreferredSize(new Dimension(520, 200 * weibo.length));
 
 
         }
@@ -175,8 +147,7 @@ public class HomepageFrame extends JFrame {
     }
 
 
-
-    public HomepageFrame() {
+    public HomepageFrame() throws IOException {
 
         //用户界面
         Container container = this.getContentPane();
@@ -186,19 +157,56 @@ public class HomepageFrame extends JFrame {
         String userName = LoginFrame.userName + "欢迎来到微微博";
         JLabel userJLabel = new JLabel(userName);
         JPanel userPanel = new JPanel();
-        userPanel.setBounds(0,0,600,40);
+        userPanel.setBounds(0, 0, 600, 40);
         userPanel.add(userJLabel);
 
-        JButton ownButton = new JButton("个人中心");
-        ownButton.setBounds(440,40,100,20);
-        ownButton.addActionListener(new ActionListener() {
+        //刷新按钮
+        JButton flushButton = new JButton("刷新");
+        flushButton.setBounds(40,40,100,40);
+        flushButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UserFrame(true);
+                try {
+                    new HomepageFrame();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 dispose();
             }
         });
 
+        //返回登录页面按钮
+        JButton returnButton = new JButton("返回登录页面");
+        returnButton.setBounds(220,40,140,40);
+        returnButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new HomepageFrame();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                dispose();
+            }
+        });
+
+        //个人中心按钮
+        JButton ownButton = new JButton("个人中心");
+        ownButton.setBounds(440, 40, 100, 40);
+        ownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new UserFrame(true);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                dispose();
+            }
+        });
+
+        container.add(returnButton);
+        container.add(flushButton);
         container.add(ownButton);
         container.add(userPanel);
         container.add(getJScrollPane());
@@ -206,13 +214,13 @@ public class HomepageFrame extends JFrame {
 
         //界面参数
         pack();
-        setBounds(500,150,600,500);
+        setBounds(500, 150, 600, 500);
         setVisible(true);
-        //setResizable(false);
+        setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         new HomepageFrame();
     }

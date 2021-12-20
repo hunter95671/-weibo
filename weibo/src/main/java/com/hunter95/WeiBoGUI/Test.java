@@ -1,4 +1,4 @@
-package WeiBoGUI;
+package com.hunter95.WeiBoGUI;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;

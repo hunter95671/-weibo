@@ -5,10 +5,7 @@ import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
-import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.RowFilter;
-import org.apache.hadoop.hbase.filter.SubstringComparator;
+import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
@@ -33,6 +30,8 @@ import static com.hunter95.utils.HBaseUtil.putData;
  * 9、获取用户的关注列表
  * 10、推送(关注用户)
  * 11、随机推送(未关注用户)
+ * 12、获得当前用户发布微博数目
+ * 13、获得当前用户关注用户数目
  */
 public class HBaseDao {
 
@@ -71,7 +70,7 @@ public class HBaseDao {
 
     //2、删除微博
     public static void deleteWeiBo(String uidAndTime) throws IOException {
-        deleteData(CONTENT_TABLE,uidAndTime);
+        deleteData(CONTENT_TABLE, uidAndTime);
     }
 
     //3、关注用户
@@ -192,7 +191,7 @@ public class HBaseDao {
     }
 
     //7、判断密码是否正确
-    public static boolean pswIfRight(String userName,String psw) throws IOException {
+    public static boolean pswIfRight(String userName, String psw) throws IOException {
 
         //1.获取表对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
@@ -208,7 +207,7 @@ public class HBaseDao {
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
                 //5.解析result并打印数据
-                if (userName.equals(Bytes.toString(CellUtil.cloneRow(cell)))&&psw.equals(Bytes.toString(CellUtil.cloneValue(cell)))) {
+                if (userName.equals(Bytes.toString(CellUtil.cloneRow(cell))) && psw.equals(Bytes.toString(CellUtil.cloneValue(cell)))) {
                     table.close();
                     //System.out.println("true");
                     return true;
@@ -285,7 +284,7 @@ public class HBaseDao {
     }
 
     //10、推送(所有关注用户)
-    public static ArrayList<ArrayList<String>> attendRandomPush(ArrayList<String> attend) throws IOException {
+    public static ArrayList<ArrayList<String>> attendPush(ArrayList<String> attend) throws IOException {
 
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
         Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
@@ -327,12 +326,8 @@ public class HBaseDao {
         ArrayList<ArrayList<String>> arrayLists = new ArrayList<>();
 
         //循环遍历关注的用户
-        for (String s : attend) {
-
+        if (attend.isEmpty()) {
             Scan scan = new Scan();
-            Filter filter = new RowFilter(CompareFilter.CompareOp.NOT_EQUAL, new SubstringComparator(s));
-            scan.setFilter(filter);
-
             ResultScanner resultScanner = table.getScanner(scan);
 
             //解析resultScanner
@@ -343,6 +338,26 @@ public class HBaseDao {
                     arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
                     arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
                     arrayLists.add(arr);
+                }
+            }
+        } else {
+            for (String s : attend) {
+
+                Scan scan = new Scan();
+                Filter filter = new RowFilter(CompareFilter.CompareOp.NOT_EQUAL, new SubstringComparator(s));
+                scan.setFilter(filter);
+
+                ResultScanner resultScanner = table.getScanner(scan);
+
+                //解析resultScanner
+                for (Result result : resultScanner) {
+                    for (Cell cell : result.rawCells()) {
+                        ArrayList<String> arr = new ArrayList<>();
+                        arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[0]);
+                        arr.add((Bytes.toString(CellUtil.cloneRow(cell))).split("_")[1]);
+                        arr.add(Bytes.toString(CellUtil.cloneValue(cell)));
+                        arrayLists.add(arr);
+                    }
                 }
             }
         }
@@ -368,4 +383,56 @@ public class HBaseDao {
         return newArrayLists;
     }
 
+    //12、获得当前用户发布微博数目
+    public static int userWeiBoNum(String username) throws IOException {
+        int num = 0;
+
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(CONTENT_TABLE));
+
+        Scan scan = new Scan();
+
+        //添加过滤器
+        Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(username));
+        scan.setFilter(filter);
+        //scan.setFilter(new FirstKeyOnlyFilter());
+
+        ResultScanner rs = table.getScanner(scan);
+        for (Result result : rs) {
+            num += 1;
+        }
+
+        //6.关闭资源
+        table.close();
+        connection.close();
+        return num;
+    }
+
+    //13、获得当前用户关注用户数目
+    public static int userAttendNum(String username) throws IOException {
+        int num = 0;
+
+        //1.获取表对象
+        Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
+        Table table = connection.getTable(TableName.valueOf(RELATION_TABLE));
+
+        //2.构建scan对象
+        Scan scan = new Scan();
+        Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(username));
+        scan.setFilter(filter);
+        scan.addFamily(Bytes.toBytes("attends"));
+
+        //3.扫描表
+        ResultScanner resultScanner = table.getScanner(scan);
+
+        //4.解析resultScanner
+        for (Result result : resultScanner) {
+            for (Cell cell : result.rawCells()) {
+                num += 1;
+            }
+        }
+        //关闭表连接
+        table.close();
+        return num;
+    }
 }
