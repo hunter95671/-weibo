@@ -22,15 +22,13 @@ public class HomepageFrame extends JFrame {
     private String[] weiboTime={""} ;
     private String[] weiBoName={""} ;
 
-
     private int getWeiboNum() {
         //获得随机推送发布微博数目
         if (weiboNum == 0) {
-            weiboNum = 10;
+            weiboNum = 3;
         }
         return weiboNum;
     }
-
 
     private String[] getWeibo() throws IOException {
         //获得随机微博内容
@@ -38,7 +36,6 @@ public class HomepageFrame extends JFrame {
             ArrayList<ArrayList<String>> arrayList = notAttendRandomPush(attendList(LoginFrame.userName));
             for (int i = 0; i < getWeiboNum(); i++) {
                 weibo[i] = arrayList.get(i).get(2);
-
         }
         return weibo;
     }
@@ -55,7 +52,6 @@ public class HomepageFrame extends JFrame {
         return weiboTime;
     }
 
-
     private String[] getWeiBoName() throws IOException {
         //获得当前用户关注用户的发布过微博的用户名
 
@@ -69,23 +65,17 @@ public class HomepageFrame extends JFrame {
         return weiBoName;
     }
 
-
     private JScrollPane getJScrollPane() throws IOException {
 
             jScrollPane = new JScrollPane();
             jScrollPane.setBounds(40, 80, 520, 400);
             jScrollPane.setViewportView(getFatherPanel(getJPanels()));
 
-
-
-
         return jScrollPane;
 
     }
 
-
     private JPanel[] getJPanels() throws IOException {
-
 
             jPanels = new JPanel[getWeiboNum()];
             for (int i = 0; i < getWeiboNum(); i++) {
@@ -169,7 +159,7 @@ public class HomepageFrame extends JFrame {
                 try {
                     new HomepageFrame();
                 } catch (IOException ioException) {
-                    ioException.printStackTrace();
+                    //ioException.printStackTrace();
                 }
                 dispose();
             }

@@ -64,8 +64,8 @@ public class HBaseDao {
         contTable.put(contPut);
 
         //关闭资源
-        contTable.close();
-        connection.close();
+        //contTable.close();
+        //connection.close();
     }
 
     //2、删除微博
@@ -247,8 +247,8 @@ public class HBaseDao {
             }
         }
         //6.关闭资源
-        table.close();
-        connection.close();
+        //table.close();
+        //connection.close();
 
         return arrayLists;
     }
@@ -278,7 +278,7 @@ public class HBaseDao {
             }
         }
         //关闭表连接
-        table.close();
+        //table.close();
         //System.out.println(arrayLists);
         return arrayLists;
     }

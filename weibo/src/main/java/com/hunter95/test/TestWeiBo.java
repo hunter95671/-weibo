@@ -56,7 +56,9 @@ public class TestWeiBo {
         //HBaseDao.ifRepeat("zhangsan");
 
         //发布微博测试
-        //HBaseDao.publishWeiBo("zhangsan","一条微博~");
+        //HBaseDao.publishWeiBo("lisi","1条微博~~~~~");
+        //HBaseDao.publishWeiBo("lisi","2条微博~~~~~");
+        //HBaseDao.publishWeiBo("lisi","3条微博~~~~~");
 
         //删除微博测试
         //deleteWeiBo("zhangsan_2021-12-19 11:06");
@@ -73,8 +75,8 @@ public class TestWeiBo {
         //ArrayList<String> zhangsanAttendList = attendList("index");
         //System.out.println(zhangsanAttendList);
 
-        ArrayList<ArrayList<String>> index = notAttendRandomPush(attendList("index"));
-        System.out.println(index);
+        //ArrayList<ArrayList<String>> index = notAttendRandomPush(attendList("index"));
+        //System.out.println(index);
 
         //取关测试
         //deleteAttends("zhangsan","FDr6gkPfr");

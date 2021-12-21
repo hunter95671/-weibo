@@ -184,7 +184,6 @@ public class OtherFrame extends JFrame {
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
-
                 dispose();
             }
         });
