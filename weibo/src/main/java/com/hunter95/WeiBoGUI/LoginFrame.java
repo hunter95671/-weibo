@@ -24,16 +24,16 @@ public class LoginFrame extends JFrame {
         //上部分面板
         ImageIcon backPicture = new ImageIcon("src/main/QQ截图20211220103816.png");
         JLabel upLabel = new JLabel(backPicture);
-        upLabel.setBounds(0,0,600,200);
-        upLabel.setBackground(new Color(0,0,0));
+        upLabel.setBounds(0, 0, 600, 200);
+        upLabel.setBackground(new Color(0, 0, 0));
 
         //下部分面板
         JLabel downLabel = new JLabel();
-        downLabel.setBounds(0,200,600,300);
+        downLabel.setBounds(0, 200, 600, 300);
 
         //用户名文本框
-        JTextField userText = new JTextField("",20);
-        userText.setBounds(140,0,360,40);
+        JTextField userText = new JTextField("", 20);
+        userText.setBounds(140, 0, 360, 40);
         userText.setDocument(new PlainDocument() {
 
             @Override
@@ -49,18 +49,18 @@ public class LoginFrame extends JFrame {
             }
         });
         JLabel userLabel = new JLabel("用户名");
-        userLabel.setBounds(100,0,40,40);
+        userLabel.setBounds(100, 0, 40, 40);
 
 
         //登录密码框
-        JPasswordField passwordText = new JPasswordField("",16);
+        JPasswordField passwordText = new JPasswordField("", 16);
         JLabel passwordLabel = new JLabel("密码");
-        passwordLabel.setBounds(100,50,40,40);
-        passwordText.setBounds(140,50,360,40);
+        passwordLabel.setBounds(100, 50, 40, 40);
+        passwordText.setBounds(140, 50, 360, 40);
 
         //协议选择框
         JCheckBox jCheckBox = new JCheckBox("已阅读且同意用户协议");
-        jCheckBox.setBounds(240,100,400,20);
+        jCheckBox.setBounds(240, 100, 400, 20);
 
         //登录按钮
         JButton loginButton = new JButton("登录");
@@ -70,30 +70,30 @@ public class LoginFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String password = "";
                 password = String.valueOf(passwordText.getPassword());
-                if (userText.getText().equals("")){
+                if (userText.getText().equals("")) {
                     JOptionPane.showMessageDialog(
                             container,
                             "请输入用户名！",
                             "消息标题",
                             JOptionPane.WARNING_MESSAGE
                     );
-                }else  if (password.equals("")){
+                } else if (password.equals("")) {
                     JOptionPane.showMessageDialog(
                             container,
                             "请输入密码名！",
                             "消息标题",
                             JOptionPane.WARNING_MESSAGE
                     );
-                }else if (!jCheckBox.isSelected()){
+                } else if (!jCheckBox.isSelected()) {
                     JOptionPane.showMessageDialog(
                             container,
                             "请勾选同意用户协议！",
                             "消息标题",
                             JOptionPane.WARNING_MESSAGE
                     );
-                }else {
+                } else {
                     try {
-                        if(pswIfRight(userText.getText(),password)){
+                        if (pswIfRight(userText.getText(), password)) {
                             userName = userText.getText();
                             JOptionPane.showMessageDialog(
                                     container,
@@ -103,7 +103,7 @@ public class LoginFrame extends JFrame {
                             );
                             new HomepageFrame();
                             dispose();
-                        }else {
+                        } else {
                             JOptionPane.showMessageDialog(
                                     container,
                                     "用户名或密码错误！",
@@ -118,11 +118,11 @@ public class LoginFrame extends JFrame {
                 }
             }
         });
-        loginButton.setBounds(160,130,300,40);
+        loginButton.setBounds(160, 130, 300, 40);
 
         //注册按钮
         JButton registerButton = new JButton("注册");
-        registerButton.setBounds(160,180,300,40);
+        registerButton.setBounds(160, 180, 300, 40);
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -145,7 +145,7 @@ public class LoginFrame extends JFrame {
         container.add(downLabel);
 
         //界面参数
-        setBounds(500,150,600,540);
+        setBounds(500, 150, 600, 540);
         setBackground(Color.black);
         setVisible(true);
         setResizable(false);
