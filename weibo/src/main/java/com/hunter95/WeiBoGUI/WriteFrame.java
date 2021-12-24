@@ -72,7 +72,6 @@ public class WriteFrame extends JFrame {
             }
         });
 
-
         container.add(commitButton);
         container.add(welcomeLabel);
         container.add(textArea);

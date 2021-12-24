@@ -24,7 +24,6 @@ public class OtherFrame extends JFrame {
     private String[] weiboTime = null;
     private String weiBoName = null;
 
-
     private int getWeiboNum() throws IOException {
         //获得当前用户发布微博数目
         if (weiboNum == 0) {
@@ -32,7 +31,6 @@ public class OtherFrame extends JFrame {
         }
         return weiboNum;
     }
-
 
     private String[] getWeibo() throws IOException {
         //获得当前用户发布微博内容
@@ -47,7 +45,6 @@ public class OtherFrame extends JFrame {
         return weibo;
     }
 
-
     private String[] getWeiboTime() throws IOException {
         //获得当前用户发布微博时间
         if (weiboTime == null) {
@@ -61,7 +58,6 @@ public class OtherFrame extends JFrame {
         return weiboTime;
     }
 
-
     private String getWeiBoName() {
         //获得当前用户关注用户的发布过微博的用户名
         if (weiBoName == null) {
@@ -74,17 +70,14 @@ public class OtherFrame extends JFrame {
     private JScrollPane getJScrollPane() throws IOException {
         if (jScrollPane == null) {
             jScrollPane = new JScrollPane();
-
             jScrollPane.setBounds(40, 120, 520, 400);
             jScrollPane.setViewportView(getFatherPanel(getJPanels()));
-
 
         }
 
         return jScrollPane;
 
     }
-
 
     private JPanel[] getJPanels() throws IOException {
 
@@ -114,7 +107,6 @@ public class OtherFrame extends JFrame {
 
     }
 
-
     private JPanel getFatherPanel(JPanel[] weibo) {
 
         if (fatherPanel == null) {
@@ -124,11 +116,9 @@ public class OtherFrame extends JFrame {
             for (int i = 0; i < weibo.length; i++) {
 
                 fatherPanel.add(weibo[i]);
-
             }
 
             fatherPanel.setPreferredSize(new Dimension(520, 200 * weibo.length));
-
 
         }
 

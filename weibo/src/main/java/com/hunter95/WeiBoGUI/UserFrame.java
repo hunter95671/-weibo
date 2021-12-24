@@ -48,7 +48,6 @@ public class UserFrame extends JFrame {
         return followNum;
     }
 
-
     private int getOtherWeiboNum() throws IOException {
         //获得当前用户的关注用户发布微博数目
         if (otherWeiboNum == 0) {
@@ -59,7 +58,6 @@ public class UserFrame extends JFrame {
         }
         return otherWeiboNum;
     }
-
 
     private String[] getWeibo() throws IOException {
         //获得当前用户发布微博内容
@@ -182,11 +180,9 @@ public class UserFrame extends JFrame {
                 JLabel timeLabel = new JLabel(getOtherWeiboTime()[i]);
                 timeLabel.setBounds(0, 150, 200, 20);
 
-
                 otherJPanels[i].add(button);
                 otherJPanels[i].add(weiboLabel);
                 otherJPanels[i].add(timeLabel);
-
 
             }
 
@@ -272,7 +268,6 @@ public class UserFrame extends JFrame {
 
         return fatherPanel;
     }
-
 
     public UserFrame(boolean frameFlag) throws IOException {
         flag = frameFlag;
@@ -389,7 +384,6 @@ public class UserFrame extends JFrame {
         JScrollPane followScrollPane = new JScrollPane();
         followScrollPane.setBounds(0, 120, 120, 50 * followNum);
         followScrollPane.setViewportView(followListPanel);
-
 
         container.add(userPanel);
         container.add(homeButton);

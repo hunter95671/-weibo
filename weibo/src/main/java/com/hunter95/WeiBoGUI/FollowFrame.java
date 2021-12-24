@@ -25,7 +25,6 @@ public class FollowFrame extends JFrame {
     private String[] weiboTime = null;
     private String weiBoName = null;
 
-
     private int getWeiboNum() throws IOException {
         //获得当前用户发布微博数目
         if (weiboNum == 0) {
@@ -33,7 +32,6 @@ public class FollowFrame extends JFrame {
         }
         return weiboNum;
     }
-
 
     private String[] getWeibo() throws IOException {
         //获得当前用户发布微博内容
@@ -47,7 +45,6 @@ public class FollowFrame extends JFrame {
         return weibo;
     }
 
-
     private String[] getWeiboTime() throws IOException {
         //获得当前用户发布微博时间
         if (weiboTime == null) {
@@ -60,7 +57,6 @@ public class FollowFrame extends JFrame {
         return weiboTime;
     }
 
-
     private String getWeiBoName() {
         //获得当前用户关注用户的发布过微博的用户名
         if (weiBoName == null) {
@@ -68,7 +64,6 @@ public class FollowFrame extends JFrame {
         }
         return weiBoName;
     }
-
 
     private JScrollPane getJScrollPane() throws IOException {
         if (jScrollPane == null) {
@@ -111,7 +106,6 @@ public class FollowFrame extends JFrame {
 
     }
 
-
     private JPanel getFatherPanel(JPanel[] weibo) {
 
         if (fatherPanel == null) {
@@ -125,7 +119,6 @@ public class FollowFrame extends JFrame {
             }
 
             fatherPanel.setPreferredSize(new Dimension(520, 200 * weibo.length));
-
 
         }
 

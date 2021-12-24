@@ -22,7 +22,7 @@ public class TestWeiBo {
 
         try {
             //创建命名空间
-            //HBaseUtil.createNameSpace(constants.NAMESPACE);
+            HBaseUtil.createNameSpace(constants.NAMESPACE);
             //创建微博内容表
             HBaseUtil.createTable(constants.CONTENT_TABLE, constants.CONTENT_TABLE_VERSIONS, constants.CONTENT_TABLE_CF);
             //创建用户关系表
@@ -38,7 +38,7 @@ public class TestWeiBo {
     public static void main(String[] args) throws IOException, InterruptedException {
 
         //初始化
-        //init();
+        init();
         //HBaseUtil.createTable(constants.USER_TABLE,constants.USER_TABLE_VERSIONS,constants.USER_TABLE_CF);
 
         //全表查看

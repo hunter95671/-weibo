@@ -106,18 +106,14 @@ public class HomepageFrame extends JFrame {
                 jPanels[i].add(weiboLabel);
                 jPanels[i].add(timeLabel);
 
-
             }
-
 
 
         return jPanels;
 
     }
 
-
     private JPanel getFatherPanel(JPanel[] weibo) {
-
 
             fatherPanel = new JPanel();
             fatherPanel.setLayout(new GridLayout(weibo.length, 1));
@@ -126,16 +122,12 @@ public class HomepageFrame extends JFrame {
 
                 fatherPanel.add(weibo[i]);
 
-
-
             fatherPanel.setPreferredSize(new Dimension(520, 200 * weibo.length));
-
 
         }
 
         return fatherPanel;
     }
-
 
     public HomepageFrame() throws IOException {
 
@@ -200,7 +192,6 @@ public class HomepageFrame extends JFrame {
         container.add(ownButton);
         container.add(userPanel);
         container.add(getJScrollPane());
-
 
         //界面参数
         pack();
