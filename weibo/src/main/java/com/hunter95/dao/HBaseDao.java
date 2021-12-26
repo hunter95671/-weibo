@@ -108,7 +108,6 @@ public class HBaseDao {
         //10.执行用户关系表的插入数据操作
         relaTable.put(relaPuts);
 
-
         //关闭资源
         relaTable.close();
         connection.close();

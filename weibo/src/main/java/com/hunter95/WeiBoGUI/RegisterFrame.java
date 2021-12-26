@@ -143,6 +143,16 @@ public class RegisterFrame extends JFrame {
                 }
             }
         });
+        //返回登录界面按钮
+        JButton returnButton = new JButton("返回登录界面");
+        returnButton.setBounds(120, 440, 360, 40);
+        returnButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LoginFrame();
+                dispose();
+            }
+        });
 
         container.add(userLabel);
         container.add(userText);
@@ -152,6 +162,7 @@ public class RegisterFrame extends JFrame {
         container.add(rePasswordText);
         container.add(jCheckBox);
         container.add(registerButton);
+        container.add(returnButton);
 
 
         setBounds(500, 150, 600, 540);

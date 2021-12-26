@@ -163,11 +163,7 @@ public class HomepageFrame extends JFrame {
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    new HomepageFrame();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+                new LoginFrame();
                 dispose();
             }
         });

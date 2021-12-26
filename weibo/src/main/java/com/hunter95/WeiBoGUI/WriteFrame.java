@@ -43,9 +43,9 @@ public class WriteFrame extends JFrame {
                 super.insertString(offs, str, a);
             }
         });
-
+        //发布按钮
         JButton commitButton = new JButton("发布");
-        commitButton.setBounds(90,260,110,40);
+        commitButton.setBounds(60,260,75,40);
         commitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -71,8 +71,22 @@ public class WriteFrame extends JFrame {
                 dispose();
             }
         });
+        //取消按钮
+        JButton abortButton = new JButton("取消");
+        abortButton.setBounds(160,260,75,40);
+        abortButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new UserFrame(true);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
 
         container.add(commitButton);
+        container.add(abortButton);
         container.add(welcomeLabel);
         container.add(textArea);
         setBounds(600, 250, 300, 360);
