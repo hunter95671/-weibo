@@ -53,7 +53,7 @@ public class UserFrame extends JFrame {
         if (otherWeiboNum == 0) {
             ArrayList<String> arrayList = attendList(LoginFrame.userName);
             for (String s : arrayList) {
-                otherWeiboNum+=userWeiBoNum(s);
+                otherWeiboNum += userWeiBoNum(s);
             }
         }
         return otherWeiboNum;
@@ -285,7 +285,7 @@ public class UserFrame extends JFrame {
 
         //返回首页按钮
         JButton homeButton = new JButton("返回首页");
-        homeButton.setBounds(0,40,120,40);
+        homeButton.setBounds(0, 40, 120, 40);
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
