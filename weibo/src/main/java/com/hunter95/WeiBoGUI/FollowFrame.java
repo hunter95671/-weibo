@@ -73,7 +73,6 @@ public class FollowFrame extends JFrame {
             jScrollPane.setViewportView(getFatherPanel(getJPanels()));
 
         }
-
         return jScrollPane;
 
     }
@@ -150,7 +149,7 @@ public class FollowFrame extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE
                 );
                 try {
-                    deleteAttends(LoginFrame.userName,name);
+                    deleteAttends(LoginFrame.userName, name);
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
