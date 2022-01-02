@@ -64,8 +64,8 @@ public class HBaseDao {
         contTable.put(contPut);
 
         //关闭资源
-        //contTable.close();
-        //connection.close();
+        contTable.close();
+        connection.close();
     }
 
     //2、删除微博
@@ -119,7 +119,7 @@ public class HBaseDao {
         //1.获取connection对象
         Connection connection = ConnectionFactory.createConnection(constants.CONFIGURATION);
 
-        //第一部分：操作用户关系表
+        //操作用户关系表
 
         //1.获取用户关系表对象
         Table relaTable = connection.getTable(TableName.valueOf(RELATION_TABLE));
@@ -245,10 +245,9 @@ public class HBaseDao {
                 arrayLists.add(arr);
             }
         }
-        //6.关闭资源
-        //table.close();
-        //connection.close();
-
+        //关闭资源
+        table.close();
+        connection.close();
         return arrayLists;
     }
 
@@ -277,7 +276,7 @@ public class HBaseDao {
             }
         }
         //关闭表连接
-        //table.close();
+        table.close();
         //System.out.println(arrayLists);
         return arrayLists;
     }
@@ -394,14 +393,13 @@ public class HBaseDao {
         //添加过滤器
         Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new SubstringComparator(username));
         scan.setFilter(filter);
-        //scan.setFilter(new FirstKeyOnlyFilter());
 
         ResultScanner rs = table.getScanner(scan);
         for (Result result : rs) {
             num += 1;
         }
 
-        //6.关闭资源
+        //关闭资源
         table.close();
         connection.close();
         return num;

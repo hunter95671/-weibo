@@ -18,8 +18,7 @@ public class RegisterFrame extends JFrame {
         //定义页面
         Container container = this.getContentPane();
         container.setLayout(null);
-
-        //
+        
         JTextField userText = new JTextField("", 20);
         JLabel userLabel = new JLabel("用户名 （用户名不能多于10个字符）");
         userLabel.setBounds(120, 100, 240, 40);
