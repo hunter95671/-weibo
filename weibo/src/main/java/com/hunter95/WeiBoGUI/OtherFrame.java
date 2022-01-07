@@ -74,9 +74,7 @@ public class OtherFrame extends JFrame {
             jScrollPane.setViewportView(getFatherPanel(getJPanels()));
 
         }
-
         return jScrollPane;
-
     }
 
     private JPanel[] getJPanels() throws IOException {
