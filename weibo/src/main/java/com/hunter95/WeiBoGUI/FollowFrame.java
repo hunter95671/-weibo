@@ -112,11 +112,8 @@ public class FollowFrame extends JFrame {
             fatherPanel.setLayout(new GridLayout(weibo.length, 1));
 
             for (int i = 0; i < weibo.length; i++) {
-
                 fatherPanel.add(weibo[i]);
-
             }
-
             fatherPanel.setPreferredSize(new Dimension(520, 200 * weibo.length));
 
         }
