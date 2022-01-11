@@ -14,7 +14,6 @@ import static com.hunter95.dao.HBaseDao.*;
 public class UserFrame extends JFrame {
 
     public Container container = this.getContentPane();
-
     private JScrollPane jScrollPane = null;
     private JPanel fatherPanel = null;
     private JPanel[] jPanels = null;
